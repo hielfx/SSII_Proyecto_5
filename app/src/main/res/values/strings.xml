@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">SSII-PSI5</string>
+    <string name="peticion_material">Petición de material sanitario</string>
+    <string name="guantes">Guantes</string>
+    <string name="traje_enfermero">Traje enfermero</string>
+    <string name="bisturi">Bisturí</string>
+    <string name="mascarilla">Mascarilla</string>
+    <string name="pinzas">Pinzas</string>
+    <string name="agujas">Agujas</string>
+    <string name="vendas">Vendas</string>
+    <string name="camilla">Camilla</string>
+
+    <string name="btn_send">Enviar</string>
 </resources>
