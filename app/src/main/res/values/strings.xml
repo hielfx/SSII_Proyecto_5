@@ -11,4 +11,11 @@
     <string name="camilla">Camilla</string>
 
     <string name="btn_send">Enviar</string>
+    <string name="select_one">Seleccione al menos un elemento</string>
+    <string name="selected_one">Hay al menos un elemento seleccionado</string>
+    <string name="confirm_send">¿Desea confirmar el envío?</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirmed">Envío confirmado</string>
+    <string name="dialog_title">Envío de material sanitario</string>
 </resources>

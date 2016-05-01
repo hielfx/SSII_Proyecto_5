@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,7 +7,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.hielf.ssii_psi5.MainActivity">
+    tools:context="com.hielf.ssii_psi5.MainActivity"
+    android:id="@+id/mainLayout"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
@@ -18,111 +20,155 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:layout_gravity="center_horizontal" />
 
-    <CheckBox
+    <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/guantes"
-        android:id="@+id/cb_guantes"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:checked="false"
-        android:layout_below="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_marginTop="20dp" />
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/checkboxLayout">
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/traje_enfermero"
-        android:id="@+id/cb_traje_enfermero"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:checked="false"
-        android:layout_below="@+id/cb_guantes"
-        android:layout_alignStart="@+id/cb_guantes"
-        android:layout_marginTop="10dp" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/bisturi"
-        android:id="@+id/cb_bisturi"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:checked="false"
-        android:layout_below="@+id/cb_traje_enfermero"
-        android:layout_alignStart="@+id/cb_traje_enfermero"
-        android:layout_marginTop="10dp" />
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/guantes"
+                android:id="@+id/cb_guantes"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:checked="false"
+                android:layout_below="@+id/textView"
+                android:layout_alignStart="@+id/textView"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:onClick="onCheckboxClicked" />
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/mascarilla"
-        android:id="@+id/cb_mascarilla"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:checked="false"
-        android:layout_below="@+id/cb_bisturi"
-        android:layout_alignStart="@+id/cb_bisturi"
-        android:layout_marginTop="10dp" />
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pinzas"
+                android:id="@+id/cb_pinzas"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:checked="false"
+                android:layout_toEndOf="@+id/cb_traje_enfermero"
+                android:layout_marginTop="10dp"
+                android:onClick="onCheckboxClicked" />
+        </TableRow>
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pinzas"
-        android:id="@+id/cb_pinzas"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:checked="false"
-        android:layout_below="@+id/textView"
-        android:layout_toEndOf="@+id/cb_traje_enfermero"
-        android:layout_marginStart="17dp"
-        android:layout_marginTop="20dp" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/agujas"
-        android:id="@+id/cb_agujas"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:checked="false"
-        android:layout_alignTop="@+id/cb_traje_enfermero"
-        android:layout_alignStart="@+id/cb_pinzas" />
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/traje_enfermero"
+                android:id="@+id/cb_traje_enfermero"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:checked="false"
+                android:layout_below="@+id/cb_guantes"
+                android:layout_alignStart="@+id/cb_guantes"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:onClick="onCheckboxClicked" />
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/vendas"
-        android:id="@+id/cb_vendas"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:checked="false"
-        android:layout_alignTop="@+id/cb_bisturi"
-        android:layout_alignStart="@+id/cb_agujas" />
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/agujas"
+                android:id="@+id/cb_agujas"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:checked="false"
+                android:layout_alignTop="@+id/cb_traje_enfermero"
+                android:layout_alignStart="@+id/cb_pinzas"
+                android:layout_marginTop="10dp"
+                android:onClick="onCheckboxClicked" />
+        </TableRow>
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/camilla"
-        android:id="@+id/cb_camilla"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:checked="false"
-        android:layout_alignTop="@+id/cb_mascarilla"
-        android:layout_alignStart="@+id/cb_vendas" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bisturi"
+                android:id="@+id/cb_bisturi"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:checked="false"
+                android:layout_below="@+id/cb_traje_enfermero"
+                android:layout_alignStart="@+id/cb_traje_enfermero"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:onClick="onCheckboxClicked" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vendas"
+                android:id="@+id/cb_vendas"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:checked="false"
+                android:layout_alignTop="@+id/cb_bisturi"
+                android:layout_alignStart="@+id/cb_agujas"
+                android:layout_marginTop="10dp"
+                android:onClick="onCheckboxClicked" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mascarilla"
+                android:id="@+id/cb_mascarilla"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:checked="false"
+                android:layout_below="@+id/cb_bisturi"
+                android:layout_alignStart="@+id/cb_bisturi"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:onClick="onCheckboxClicked" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/camilla"
+                android:id="@+id/cb_camilla"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:checked="false"
+                android:layout_alignTop="@+id/cb_mascarilla"
+                android:layout_alignStart="@+id/cb_vendas"
+                android:layout_marginTop="10dp"
+                android:onClick="onCheckboxClicked" />
+
+        </TableRow>
+
+    </TableLayout>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/btn_send"
-        android:id="@+id/enviar"
+        android:id="@+id/btn_send"
         android:layout_below="@+id/cb_mascarilla"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="10dp"
         android:layout_alignEnd="@+id/cb_camilla"
-        android:layout_alignStart="@+id/cb_mascarilla" />
+        android:layout_alignStart="@+id/cb_mascarilla"
+        android:layout_gravity="center_horizontal" />
 
 
-</RelativeLayout>
+</LinearLayout>
