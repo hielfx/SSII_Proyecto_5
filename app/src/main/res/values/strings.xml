@@ -18,4 +18,6 @@
     <string name="cancel">Cancelar</string>
     <string name="confirmed">Envío confirmado</string>
     <string name="dialog_title">Envío de material sanitario</string>
+    <string name="server_ip">Introduzca la dirección del servidor</string>
+    <string name="send_ip">Enviar ip</string>
 </resources>
