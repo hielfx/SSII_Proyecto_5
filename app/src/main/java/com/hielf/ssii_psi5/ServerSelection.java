@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public class ServerSelection extends AppCompatActivity {
 
-    private final static String SERVER_IP = "com.hielf.ssii_psi5.SERVER_IP";
+    public final static String SERVER_IP = "com.hielf.ssii_psi5.SERVER_IP";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class ServerSelection extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         EditText server_ip = (EditText) findViewById(R.id.server_ip);
         String server_ip_str = server_ip.getText().toString();
-        intent.putExtra("SERVER_IP", server_ip_str);
+        intent.putExtra(SERVER_IP, server_ip_str);
 
         //We start the new activity
         startActivity(intent);

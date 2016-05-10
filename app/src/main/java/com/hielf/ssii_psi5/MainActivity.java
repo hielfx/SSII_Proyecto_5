@@ -2,9 +2,11 @@ package com.hielf.ssii_psi5;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<CheckBox> checkedCheckbox;
 
+    private String serverIp;
+
     public List<CheckBox> getCheckedCheckbox() {
         return checkedCheckbox;
     }
@@ -35,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //We receive the intent and set the server ip to the value
+        Intent intent = getIntent();
+
+        serverIp = intent.getStringExtra(ServerSelection.SERVER_IP);
 
         //We will add and remove the checkbox from this list
         checkedCheckbox = new ArrayList<CheckBox>();
@@ -53,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
                 showDialog();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void showDialog() {
