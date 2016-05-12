@@ -20,4 +20,5 @@
     <string name="dialog_title">Envío de material sanitario</string>
     <string name="server_ip">Introduzca la dirección del servidor</string>
     <string name="send_ip">Enviar ip</string>
+    <string name="default_ip">192.168.1.192</string>
 </resources>

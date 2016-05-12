@@ -14,22 +14,34 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.SocketFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     private List<CheckBox> checkedCheckbox;
 
     private String serverIp;
+    private Integer serverPort;
+
 
     public List<CheckBox> getCheckedCheckbox() {
         return checkedCheckbox;
@@ -43,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
         //We receive the intent and set the server ip to the value
         Intent intent = getIntent();
 
-        serverIp = intent.getStringExtra(ServerSelection.SERVER_IP);
+        serverIp = intent.getStringExtra(ServerSelectionActivity.SERVER_IP);
+        serverPort = 7070;
 
         //We will add and remove the checkbox from this list
         checkedCheckbox = new ArrayList<CheckBox>();
@@ -83,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             String message;
                             String signedMessage;
+                            String messageToSend;
                             KeyPair kp;
 
                             //Sign the elements
@@ -90,20 +104,81 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 kp = generateKeyPair();
                                 signedMessage = signMessage(message, kp.getPrivate());
+                                messageToSend = generateMessageToSend(message, kp.getPublic());//TODO: Change to signedMessage
+
+                                //Connecto to the server and get data in a new thread
+                                Thread thread = new Thread(new ClientThread(messageToSend, serverIp, serverPort));
+                                thread.start();
+//                                System.out.println(responseMessage);
+
                             } catch (Exception oops) {
                                 //TODO: Change with other exceptions and display errors
-                                oops.printStackTrace();
+                                System.out.println(oops.getMessage());
                             }
-                            //Send the data
-                            //TODO: send the message
-
-
-                            Toast.makeText(getApplicationContext(), R.string.confirmed, Toast.LENGTH_SHORT).show();
                         }
                     }).setNegativeButton(R.string.cancel, null)
                     .setTitle(R.string.dialog_title);
             dialog.show();
         }
+    }
+
+    //<--------------------Thread to connect to the server------------------------------->
+    private class ClientThread implements Runnable {
+
+        private String messageToSend;
+        private String serverIp;
+        private Integer serverPort;
+
+        public ClientThread(String messageToSend, String serverIp, Integer serverPort) {
+            super();
+            this.messageToSend = messageToSend;
+            this.serverIp = serverIp;
+            this.serverPort = serverPort;
+        }
+
+        @Override
+        public void run() {
+            String result;
+
+            try {
+                //Send the data
+                SocketFactory socketFactory = SocketFactory.getDefault();
+                Socket socket = socketFactory.createSocket(serverIp, serverPort);
+                BufferedWriter outputStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                BufferedReader inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                //The "\n" is necessary because it tells the server when a line is read and receives the message
+                outputStream.write(messageToSend + "\n");
+                outputStream.flush();//Send the data
+                result = inputStream.readLine();
+
+                //Closing
+                inputStream.close();
+                outputStream.close();
+                socket.close();
+
+                //All accord to the plan
+                Toast.makeText(getApplicationContext(), R.string.confirmed, Toast.LENGTH_SHORT).show();
+            } catch (Exception oops) {
+                //TODO: Change with other exceptions and display errors
+                System.out.println(oops.getMessage());
+                result = null;
+            }
+
+        }
+    }
+
+    // <---------------------- Methods ------------------------->
+
+    private String generateMessageToSend(String signedMessage, PublicKey publicKey) throws JSONException {
+        JSONObject result;
+
+        result = new JSONObject();
+
+        result.put("message", signedMessage);
+        result.put("publicKey", publicKey);
+
+        return result.toString();
     }
 
     private String generateMessage() {
@@ -128,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Method to generate a keyPair
     private KeyPair generateKeyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator kpg;
         KeyPair kp;
@@ -139,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
         return kp;
     }
 
+    //Method to sign a message
     private String signMessage(String message, PrivateKey pk) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         Signature sg;
         byte[] signedBytes;
@@ -171,6 +248,5 @@ public class MainActivity extends AppCompatActivity {
 
         return guantes.isChecked() || traje.isChecked() || bisturi.isChecked() || mascarilla.isChecked() || pizas.isChecked() || agujas.isChecked() || vendas.isChecked() || camilla.isChecked();
     }
-
 
 }

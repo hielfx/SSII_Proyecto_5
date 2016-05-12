@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class ServerSelection extends AppCompatActivity {
+public class ServerSelectionActivity extends AppCompatActivity {
 
     public final static String SERVER_IP = "com.hielf.ssii_psi5.SERVER_IP";
 
