@@ -1,9 +1,11 @@
 package com.hielf.ssii_psi5;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.MenuItem;
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private String serverIp;
     private Integer serverPort;
 
+    private ProgressDialog progressDialog;
+    private Handler handler;
 
     public List<CheckBox> getCheckedCheckbox() {
         return checkedCheckbox;
@@ -106,7 +110,22 @@ public class MainActivity extends AppCompatActivity {
                                 signedMessage = signMessage(message, kp.getPrivate());
                                 messageToSend = generateMessageToSend(message, kp.getPublic());//TODO: Change to signedMessage
 
-                                //Connecto to the server and get data in a new thread
+                                //Display a loading screen
+                                progressDialog = new ProgressDialog(MainActivity.this);
+                                progressDialog.setTitle(getString(R.string.loading_title));
+                                progressDialog.setMessage(getString(R.string.loading_message));
+                                progressDialog.setCancelable(false);
+
+                                progressDialog.show();
+                                final Thread loadingThread = new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Thread.currentThread().interrupt();//This is inefficient but if don't do it this way the progress dialog will show too late
+                                    }
+                                });
+                                loadingThread.start();
+
+                                //Connect to to the server and get data in a new thread
                                 Thread thread = new Thread(new ClientThread(messageToSend, serverIp, serverPort));
                                 thread.start();
 //                                System.out.println(responseMessage);
@@ -141,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             String result;
 
             try {
+
                 //Send the data
                 SocketFactory socketFactory = SocketFactory.getDefault();
                 Socket socket = socketFactory.createSocket(serverIp, serverPort);
@@ -157,12 +177,16 @@ public class MainActivity extends AppCompatActivity {
                 outputStream.close();
                 socket.close();
 
+                progressDialog.dismiss();
+
                 //All accord to the plan
                 Toast.makeText(getApplicationContext(), R.string.confirmed, Toast.LENGTH_SHORT).show();
             } catch (Exception oops) {
                 //TODO: Change with other exceptions and display errors
                 System.out.println(oops.getMessage());
                 result = null;
+
+                progressDialog.dismiss();
             }
 
         }
