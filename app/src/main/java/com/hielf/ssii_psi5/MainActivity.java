@@ -23,15 +23,18 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,8 +110,10 @@ public class MainActivity extends AppCompatActivity {
                             message = generateMessage();
                             try {
                                 kp = generateKeyPair();
-                                signedMessage = signMessage(message, kp.getPrivate());
-                                messageToSend = generateMessageToSend(message, kp.getPublic());//TODO: Change to signedMessage
+                                RSAPublicKey pbk = (RSAPublicKey) kp.getPublic();
+                                RSAPrivateKey pvk = (RSAPrivateKey) kp.getPrivate();
+                                signedMessage = signMessage(message, pvk);
+                                messageToSend = generateMessageToSend(message, pbk, signedMessage);//TODO: Change to signedMessage
 
                                 //Display a loading screen
                                 progressDialog = new ProgressDialog(MainActivity.this);
@@ -194,13 +199,17 @@ public class MainActivity extends AppCompatActivity {
 
     // <---------------------- Methods ------------------------->
 
-    private String generateMessageToSend(String signedMessage, PublicKey publicKey) throws JSONException {
+    private String generateMessageToSend(String message, RSAPublicKey publicKey, String signedMessage) throws JSONException, UnsupportedEncodingException {
         JSONObject result;
 
         result = new JSONObject();
 
-        result.put("message", signedMessage);
-        result.put("publicKey", publicKey);
+        result.put("message", message);
+        BigInteger modulus = publicKey.getModulus();
+        result.put("modulus", Base64.encodeToString(modulus.toByteArray(), Base64.DEFAULT));
+        BigInteger exponent = publicKey.getPublicExponent();
+        result.put("exponent", Base64.encodeToString(exponent.toByteArray(), Base64.DEFAULT));
+        result.put("signedMessage", signedMessage);
 
         return result.toString();
     }
