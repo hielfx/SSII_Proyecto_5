@@ -19,8 +19,25 @@
     <string name="confirmed">Envío confirmado</string>
     <string name="dialog_title">Envío de material sanitario</string>
     <string name="server_ip">Introduzca la dirección del servidor</string>
-    <string name="send_ip">Enviar ip</string>
+    <string name="send_ip">Seleccionar dirección</string>
     <string name="default_ip">192.168.1.192</string>
     <string name="loading_title">Enviando...</string>
     <string name="loading_message">Enviando datos al servidor, por favor espere...</string>
+
+    <string name="btn_accept">Aceptar</string>
+
+    <string name="title_exception">Error</string>
+    <string name="message_exception">Hubo un problema en la transferencia con el servidor.</string>
+
+    <string name="title_success">Éxito</string>
+    <string name="message_success">La petición se envió correctamente al servidor y ha sido almacenada.</string>
+
+    <string name="title_error">Error de verificación</string>
+    <string name="message_error">Los datos no pudieron ser verificados por el servidor.</string>
+
+    <string name="title_timeout">Tiempo de espera agotado</string>
+    <string name="message_timeout">El servidor tardó demasiado en responder y se ha abortado la conexión.</string>
+
+    <string name="title_unreach">Error de conexión</string>
+    <string name="message_unreach">No se pudo conectar con el servidor porque no se puede acceder a él.</string>
 </resources>

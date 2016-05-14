@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.MenuItem;
@@ -25,7 +24,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -38,8 +40,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.net.SocketFactory;
-
 public class MainActivity extends AppCompatActivity {
 
     private List<CheckBox> checkedCheckbox;
@@ -48,11 +48,16 @@ public class MainActivity extends AppCompatActivity {
     private Integer serverPort;
 
     private ProgressDialog progressDialog;
-    private Handler handler;
 
     public List<CheckBox> getCheckedCheckbox() {
         return checkedCheckbox;
     }
+
+    private final static Integer TIMEOUT = 10000;//Timeout in milliseconds
+
+    private Integer resultFromServer;
+
+    private Object locker = new Object();//Used on the ui thread to wait until our thread finishes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,17 +127,19 @@ public class MainActivity extends AppCompatActivity {
                                 progressDialog.setCancelable(false);
 
                                 progressDialog.show();
-                                final Thread loadingThread = new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Thread.currentThread().interrupt();//This is inefficient but if don't do it this way the progress dialog will show too late
-                                    }
-                                });
-                                loadingThread.start();
+//                                final Thread loadingThread = new Thread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        Thread.currentThread().interrupt();//This is inefficient but if don't do it this way the progress dialog will show too late
+//                                    }
+//                                });
+//                                loadingThread.start();
 
                                 //Connect to to the server and get data in a new thread
                                 Thread thread = new Thread(new ClientThread(messageToSend, serverIp, serverPort));
                                 thread.start();
+
+//                                dialog.dismiss();
 //                                System.out.println(responseMessage);
 
                             } catch (Exception oops) {
@@ -140,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println(oops.getMessage());
                             }
                         }
-                    }).setNegativeButton(R.string.cancel, null)
+                    })
+                    .setNegativeButton(R.string.cancel, null)
                     .setTitle(R.string.dialog_title);
             dialog.show();
         }
@@ -162,13 +170,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
+
             String result;
 
             try {
 
+//                SocketFactory socketFactory = SocketFactory.getDefault();
                 //Send the data
-                SocketFactory socketFactory = SocketFactory.getDefault();
-                Socket socket = socketFactory.createSocket(serverIp, serverPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(serverIp, serverPort), TIMEOUT);
                 BufferedWriter outputStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 BufferedReader inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -182,18 +192,38 @@ public class MainActivity extends AppCompatActivity {
                 outputStream.close();
                 socket.close();
 
-                progressDialog.dismiss();
+                //Show the message accord to the server response
+                switch (result) {
+                    case "Stored correctly":
+                        resultFromServer = R.string.message_success;
+                        break;
+                    case "Server error":
+                        resultFromServer = R.string.message_error;
+                        break;
+                    default:
+                        resultFromServer = R.string.message_exception;
+                }
 
-                //All accord to the plan
-                Toast.makeText(getApplicationContext(), R.string.confirmed, Toast.LENGTH_SHORT).show();
+
+            } catch (SocketTimeoutException oops) {
+//                progressDialog.dismiss();
+                resultFromServer = R.string.message_exception;
+            } catch (SocketException oops) {
+//                progressDialog.dismiss();
+                if (oops.getMessage().contains("EHOSTUNREACH")) {
+                    //If true we can't connect to the server because we cant reach it
+                    resultFromServer = R.string.message_unreach;
+                } else {
+                    resultFromServer = R.string.message_exception;
+                }
             } catch (Exception oops) {
-                //TODO: Change with other exceptions and display errors
-                System.out.println(oops.getMessage());
-                result = null;
-
-                progressDialog.dismiss();
+//                progressDialog.dismiss();
+                resultFromServer = R.string.message_exception;
             }
 
+            progressDialog.dismiss();
+
+            return;
         }
     }
 
