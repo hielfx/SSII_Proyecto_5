@@ -223,11 +223,23 @@ public class MainActivity extends AppCompatActivity {
 
             progressDialog.dismiss();
 
+            runOnUI();
+
             return;
         }
     }
 
     // <---------------------- Methods ------------------------->
+
+    private void runOnUI() {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                Toast.makeText(MainActivity.this, resultFromServer, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     private String generateMessageToSend(String message, RSAPublicKey publicKey, String signedMessage) throws JSONException, UnsupportedEncodingException {
         JSONObject result;
